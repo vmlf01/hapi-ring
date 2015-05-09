@@ -1,0 +1,39 @@
+{
+  "name": "hapi-ring",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/nodemon/bin/nodemon.js server",
+    "test": "./node_modules/lab/bin/lab -c -L",
+    "test-cover": "./node_modules/lab/bin/lab -c -r html -o ./test/artifacts/coverage.html && open ./test/artifacts/coverage.html"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    ""
+  ],
+  "author": "Vitor Fernandes <vmlf01@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "dependencies": {
+    "boom": "^2.7.1",
+    "confidence": "^1.x.x",
+    "glue": "^2.x.x",
+    "hapi": "^8.x.x",
+    "hoek": "^2.x.x",
+    "jade": "^1.x.x",
+    "sqlite3": "^3.0.6",
+    "visionary": "^2.x.x"
+  },
+  "devDependencies": {
+    "code": "^1.x.x",
+    "lab": "^5.x.x",
+    "nodemon": "^1.x.x"
+  }
+}
