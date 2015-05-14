@@ -34,7 +34,8 @@ var manifest = {
         },
         './dao/sqliteContentsRepository': { db: require('./dao/sqlite') },
         './server/categories': { dao: require('./dao/sqliteContentsRepository') },
-        './server/performers': { dao: require('./dao/sqliteContentsRepository') }
+        './server/performers': { dao: require('./dao/sqliteContentsRepository') },
+        './server/contents': { dao: require('./dao/sqliteContentsRepository') }
     }
 };
 

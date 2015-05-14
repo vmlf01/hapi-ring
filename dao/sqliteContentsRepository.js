@@ -6,6 +6,7 @@ var Hoek = require('hoek');
 
 var internals = {
     defaults: {},
+    options: {},
     db: null
 };
 
@@ -62,10 +63,55 @@ exports.getPerformersStartingWith = function getPerformersStartingWith (startLet
 
     query = query + ' ORDER BY Name COLLATE NOCASE ASC;';
 
-    internals.db.executeQueryWithParam(query, {
+    internals.db.executeQueryWithParams(query, {
         $startLetter: startLetter + '%'
     }, cb);
 };
+
+
+exports.getTopContents = function getTopContents (startIndex, numberOfItems, cb)
+{
+    var contentsQuery = ' SELECT * FROM TOP_CONTENTS t ' +
+                        ' INNER JOIN CONTENTS c ON t.IdContent = c.IdContent ' +
+                        ' ORDER BY t.SalesOrder DESC ' +
+                        ' LIMIT $count OFFSET $start';
+
+    var contentsParams = {
+        $start: startIndex,
+        $count: numberOfItems < 100 ? numberOfItems : 100 // return a maximum of 100 rows
+    };
+
+    internals.db.execute(function (db, done) {
+
+        // get contents page
+
+        return db.all(contentsQuery, contentsParams, function (err, rows) {
+            if (err) {
+                return done(err, null);
+            }
+            else {
+
+                // get total contents count
+
+                var countQuery = ' SELECT COUNT(*) as totalRows FROM TOP_CONTENTS t ' +
+                                 ' INNER JOIN CONTENTS c ON t.IdContent = c.IdContent';
+
+                return db.get(countQuery, function (err, count) {
+                    if (err) {
+                        return done(err, null);
+                    }
+                    else {
+                        return done(null, {
+                            results: rows,
+                            totalRows: count.totalRows
+                        });
+                    }
+                });
+            }
+        });
+    }, cb);
+};
+
 
 
 /*

@@ -41,6 +41,26 @@ exports.register.attributes = {
 };
 
 
+exports.execute = function execute (actionsCb, cb) {
+    internals.connect(function (err, db) {
+        if (err) {
+            return cb(err, null);
+        }
+        else {
+            return actionsCb(db, function (err, result) {
+                db.close();
+                if (err) {
+                    return cb(err, null);
+                }
+                else {
+                    return cb(null, result);
+                }
+            });
+        }
+    })
+};
+
+
 exports.executeQuery = function executeQuery (query, cb) {
     internals.connect(function (err, db) {
         if (err) {
@@ -61,13 +81,13 @@ exports.executeQuery = function executeQuery (query, cb) {
 };
 
 
-exports.executeQueryWithParam = function executeQuery (query, param, cb) {
+exports.executeQueryWithParams = function executeQuery (query, params, cb) {
     internals.connect(function (err, db) {
         if (err) {
             return cb(err, null);
         }
         else {
-            return db.all(query, param, function (err, rows) {
+            return db.all(query, params, function (err, rows) {
                 db.close();
                 if (err) {
                     return cb(err, null);
