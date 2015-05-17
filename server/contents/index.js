@@ -29,7 +29,7 @@ exports.register = function (server, options, next) {
         method: 'GET',
         path: options.basePath + '/contents/category/{categoryId}',
         config: {
-            handler: notImplemented,
+            handler: contentsHandler.listCategoryContents,
             validate: {
                 params: {
                     categoryId: Joi.string().guid()

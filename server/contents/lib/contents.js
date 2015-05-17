@@ -10,7 +10,11 @@ module.exports = function (dao) {
     var contents = {};
 
     contents.listTopContents = function listTopContents (request, reply) {
-        dao.getTopContents(0, 4, function (err, rows) {
+        var startIndex = request.query.i || 0;
+        var numberOfItems = request.query.n || 10;
+
+
+        dao.getTopContents(startIndex, numberOfItems, function (err, rows) {
             if (err) {
                 return reply(Boom.badImplementation('Unexpected error getting top contents from database: ' + err));
             }
@@ -19,6 +23,24 @@ module.exports = function (dao) {
             }
         });
     };
+
+
+    contents.listCategoryContents = function listCategoryContents (request, reply) {
+        var categoryId = request.params.categoryId;
+        var startIndex = request.query.i || 0;
+        var numberOfItems = request.query.n || 10;
+
+
+        dao.getCategoryContents(categoryId, startIndex, numberOfItems, function (err, rows) {
+            if (err) {
+                return reply(Boom.badImplementation('Unexpected error getting top contents from database: ' + err));
+            }
+            else {
+                return reply(rows);
+            }
+        });
+    };
+
 
     return contents;
 };
