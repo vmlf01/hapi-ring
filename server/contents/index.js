@@ -1,4 +1,5 @@
 var Boom = require('boom');
+var Joi = require('joi');
 var Hoek = require('hoek');
 var Contents = require('./lib/contents');
 
@@ -12,28 +13,65 @@ exports.register = function (server, options, next) {
     server.route({
         method: 'GET',
         path: options.basePath + '/top',
-        handler: contentsHandler.listTopContents
+        config: {
+            handler: contentsHandler.listTopContents,
+            validate: {
+                query: {
+                    i: Joi.number().integer().min(0).optional().default(0),
+                    n: Joi.number().integer().min(0).max(100).optional().default(10)
+                }
+            }
+        }
     });
 
 
     server.route({
         method: 'GET',
         path: options.basePath + '/contents/category/{categoryId}',
-        handler: notImplemented
+        config: {
+            handler: notImplemented,
+            validate: {
+                params: {
+                    categoryId: Joi.string().guid()
+                },
+                query: {
+                    i: Joi.number().integer().positive().optional().default(0),
+                    n: Joi.number().integer().positive().max(100).optional().default(10)
+                }
+            }
+        }
     });
 
 
     server.route({
         method: 'GET',
         path: options.basePath + '/contents/performer/{performerId}',
-        handler: notImplemented
+        config: {
+            handler: notImplemented,
+            validate: {
+                params: {
+                    performerId: Joi.string().guid()
+                },
+                query: {
+                    i: Joi.number().integer().positive().optional().default(0),
+                    n: Joi.number().integer().positive().max(100).optional().default(10)
+                }
+            }
+        }
     });
 
 
     server.route({
         method: 'GET',
         path: options.basePath + '/contents/details/{contentId}',
-        handler: notImplemented
+        config: {
+            handler: notImplemented,
+            validate: {
+                params: {
+                    contentId: Joi.string().guid()
+                }
+            }
+        }
     });
 
 

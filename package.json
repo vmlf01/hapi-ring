@@ -28,6 +28,7 @@
     "hapi": "^8.x.x",
     "hoek": "^2.x.x",
     "jade": "^1.x.x",
+    "joi": "^6.4.1",
     "sqlite3": "^3.0.6",
     "visionary": "^2.x.x"
   },

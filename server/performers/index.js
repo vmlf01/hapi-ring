@@ -1,3 +1,4 @@
+var Joi = require('joi');
 var Hoek = require('hoek');
 var Performers = require('./lib/performers');
 
@@ -17,7 +18,14 @@ exports.register = function (server, options, next) {
     server.route({
         method: 'GET',
         path: options.basePath + '/performers/{startLetter}',
-        handler: performersHandler.listPerformersStartingWith
+        config: {
+            handler: performersHandler.listPerformersStartingWith,
+            validate: {
+                params: {
+                    startLetter: Joi.string().length(1).required()
+                }
+            }
+        }
     });
 
 
