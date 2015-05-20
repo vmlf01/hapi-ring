@@ -35,8 +35,8 @@ exports.register = function (server, options, next) {
                     categoryId: Joi.string().guid()
                 },
                 query: {
-                    i: Joi.number().integer().positive().optional().default(0),
-                    n: Joi.number().integer().positive().max(100).optional().default(10)
+                    i: Joi.number().integer().min(0).optional().default(0),
+                    n: Joi.number().integer().min(0).max(100).optional().default(10)
                 }
             }
         }
@@ -53,8 +53,8 @@ exports.register = function (server, options, next) {
                     performerId: Joi.string().guid()
                 },
                 query: {
-                    i: Joi.number().integer().positive().optional().default(0),
-                    n: Joi.number().integer().positive().max(100).optional().default(10)
+                    i: Joi.number().integer().min(0).optional().default(0),
+                    n: Joi.number().integer().min(0).max(100).optional().default(10)
                 }
             }
         }
