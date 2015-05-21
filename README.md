@@ -1,6 +1,6 @@
 # hapi-ring
 
-
+[![Build Status](https://travis-ci.org/vmlf01/hapi-ring.svg?branch=master)](https://travis-ci.org/vmlf01/hapi-ring)
 
 
 Glue - Hapi server composer/bootstrapper
