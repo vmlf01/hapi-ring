@@ -71,90 +71,33 @@ exports.getPerformersStartingWith = function getPerformersStartingWith (startLet
 
 exports.getTopContents = function getTopContents (startIndex, numberOfItems, cb)
 {
-    var contentsQuery = ' SELECT * FROM TOP_CONTENTS t ' +
-                        ' INNER JOIN CONTENTS c ON t.IdContent = c.IdContent ' +
-                        ' ORDER BY t.SalesOrder DESC ' +
-                        ' LIMIT $count OFFSET $start';
-
-    var contentsParams = {
-        $start: startIndex,
-        $count: numberOfItems < 100 ? numberOfItems : 100 // return a maximum of 100 rows
+    var pagedQuery = {
+        columns: '*',
+        from: 'TOP_CONTENTS t INNER JOIN CONTENTS c ON t.IdContent = c.IdContent',
+        orderBy: 't.SalesOrder DESC',
+        startIndex: startIndex,
+        numberOfItems: numberOfItems,
     };
 
-    internals.db.execute(function (db, done) {
-
-        // get contents page
-
-        return db.all(contentsQuery, contentsParams, function (err, rows) {
-            if (err) {
-                return done(err, null);
-            }
-            else {
-
-                // get total contents count
-
-                var countQuery = ' SELECT COUNT(*) as totalRows FROM TOP_CONTENTS t ' +
-                                 ' INNER JOIN CONTENTS c ON t.IdContent = c.IdContent';
-
-                return db.get(countQuery, function (err, count) {
-                    if (err) {
-                        return done(err, null);
-                    }
-                    else {
-                        return done(null, {
-                            results: rows,
-                            totalRows: count.totalRows
-                        });
-                    }
-                });
-            }
-        });
-    }, cb);
+    return internals.db.executePagedQuery(pagedQuery, cb);
 };
 
 
 exports.getCategoryContents = function getCategoryContents (categoryId, startIndex, numberOfItems, cb)
 {
-    var contentsQuery = ' SELECT * FROM CONTENTS ' +
-        ' WHERE IdCategory = $idCategory ' +
-        ' ORDER BY CreationDate DESC ' +
-        ' LIMIT $count OFFSET $start';
-
-    var contentsParams = {
-        $idCategory: categoryId,
-        $start: startIndex,
-        $count: numberOfItems < 100 ? numberOfItems : 100 // return a maximum of 100 rows
+    var pagedQuery = {
+        columns: '*',
+        from: 'CONTENTS',
+        where: 'IdCategory = $idCategory',
+        orderBy: 'CreationDate DESC',
+        startIndex: startIndex,
+        numberOfItems: numberOfItems,
+        params: {
+            $idCategory: categoryId,
+        }
     };
 
-    internals.db.execute(function (db, done) {
-
-        // get contents page
-
-        return db.all(contentsQuery, contentsParams, function (err, rows) {
-            if (err) {
-                return done(err, null);
-            }
-            else {
-
-                // get total contents count
-
-                var countQuery = ' SELECT COUNT(*) as totalRows FROM CONTENTS ' +
-                    ' WHERE IdCategory = $idCategory ';
-
-                return db.get(countQuery, { $idCategory: categoryId }, function (err, count) {
-                    if (err) {
-                        return done(err, null);
-                    }
-                    else {
-                        return done(null, {
-                            results: rows,
-                            totalRows: count.totalRows
-                        });
-                    }
-                });
-            }
-        });
-    }, cb);
+    return internals.db.executePagedQuery(pagedQuery, cb);
 };
 
 

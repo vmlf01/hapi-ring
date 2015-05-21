@@ -7,12 +7,12 @@ var sqlite3 = require('sqlite3');
 var internals = {
     defaults: {
         verbose: true,
-        connection: ':memory:'
+        connection: ':memory:',
+        pageMaxItems: 100
     },
     options: {},
     connect: function connect (cb) {
-
-        console.log('SQLite: Connecting to ' + internals.options.connection);
+        internals.logVerbose('Connecting to ' + internals.options.connection);
         var db = new sqlite3.Database(
             internals.options.connection,
             sqlite3.OPEN_READWRITE
@@ -24,6 +24,11 @@ var internals = {
         db.once('open', function () {
             cb(null, this);
         });
+    },
+    logVerbose: function (msg) {
+        if (internals.options.verbose) {
+            console.log('SQLite: ' + msg);
+        }
     }
 };
 
@@ -113,3 +118,69 @@ exports.executeQueryWithParams = function executeQuery (query, params, cb) {
         }
     });
 };
+
+
+exports.executePagedQuery = function executePagedQuery (query, cb)
+{
+    // query is an object with following structure:
+    //{
+    //    columns,
+    //    from,
+    //    where,
+    //    orderBy,
+    //    params,
+    //    startIndex,
+    //    numberOfItems
+    //}
+
+
+    var pageQuery = ' SELECT ' + query.columns +
+        ' FROM ' + query.from +
+        (query.where ? ' WHERE ' + query.where : '') +
+        (query.orderBy ? ' ORDER BY ' + query.orderBy : '') +
+        ' LIMIT $count OFFSET $start ';
+
+    var queryParams =  {
+        $start: query.startIndex || 0,
+        $count: query.numberOfItems && query.numberOfItems < internals.options.pageMaxItems ?
+            query.numberOfItems :
+            internals.options.pageMaxItems // return a maximum of 100 rows
+    };
+
+    Hoek.merge(queryParams, query.params);
+
+    exports.execute(function (db, done) {
+
+        // get results page
+
+        internals.logVerbose('Executing ' + pageQuery);
+        internals.logVerbose('  With params: ' + JSON.stringify(queryParams));
+        return db.all(pageQuery, queryParams, function (err, rows) {
+            if (err) {
+                return done(err, null);
+            }
+            else {
+
+                // get total results count
+
+                var countQuery = ' SELECT COUNT(*) as totalRows FROM ' + query.from +
+                    (query.where ? ' WHERE ' + query.where : '');
+
+                return db.get(countQuery, query.params, function (err, count) {
+                    if (err) {
+                        return done(err, null);
+                    }
+                    else {
+                        return done(null, {
+                            results: rows,
+                            totalRows: count.totalRows
+                        });
+                    }
+                });
+            }
+        });
+    }, cb);
+};
+
+
+
