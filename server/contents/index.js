@@ -4,6 +4,13 @@ var Hoek = require('hoek');
 var Contents = require('./lib/contents');
 
 
+var internals = {
+    notImplemented: function (request, reply) {
+        return reply(Boom.notImplemented('endpoint handler is not yet implemented!'));
+    }
+};
+
+
 exports.register = function (server, options, next) {
 
     options = Hoek.applyToDefaults({ basePath: '' }, options);
@@ -47,7 +54,7 @@ exports.register = function (server, options, next) {
         method: 'GET',
         path: options.basePath + '/contents/performer/{performerId}',
         config: {
-            handler: notImplemented,
+            handler: internals.notImplemented,
             validate: {
                 params: {
                     performerId: Joi.string().guid()
@@ -65,7 +72,7 @@ exports.register = function (server, options, next) {
         method: 'GET',
         path: options.basePath + '/contents/details/{contentId}',
         config: {
-            handler: notImplemented,
+            handler: internals.notImplemented,
             validate: {
                 params: {
                     contentId: Joi.string().guid()
@@ -82,8 +89,3 @@ exports.register = function (server, options, next) {
 exports.register.attributes = {
     name: 'api-contents'
 };
-
-
-function notImplemented(request, reply) {
-    return reply(Boom.notImplemented('endpoint handler is not yet implemented!'));
-}

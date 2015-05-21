@@ -76,7 +76,7 @@ exports.getTopContents = function getTopContents (startIndex, numberOfItems, cb)
         from: 'TOP_CONTENTS t INNER JOIN CONTENTS c ON t.IdContent = c.IdContent',
         orderBy: 't.SalesOrder DESC',
         startIndex: startIndex,
-        numberOfItems: numberOfItems,
+        numberOfItems: numberOfItems
     };
 
     return internals.db.executePagedQuery(pagedQuery, cb);
@@ -93,7 +93,7 @@ exports.getCategoryContents = function getCategoryContents (categoryId, startInd
         startIndex: startIndex,
         numberOfItems: numberOfItems,
         params: {
-            $idCategory: categoryId,
+            $idCategory: categoryId
         }
     };
 

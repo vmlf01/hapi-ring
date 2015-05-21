@@ -140,7 +140,7 @@ exports.executePagedQuery = function executePagedQuery (query, cb)
         (query.orderBy ? ' ORDER BY ' + query.orderBy : '') +
         ' LIMIT $count OFFSET $start ';
 
-    var queryParams =  {
+    var queryParams = {
         $start: query.startIndex || 0,
         $count: query.numberOfItems && query.numberOfItems < internals.options.pageMaxItems ?
             query.numberOfItems :
