@@ -11,14 +11,19 @@ var internals = {
     },
     options: {},
     connect: function connect (cb) {
+
         console.log('SQLite: Connecting to ' + internals.options.connection);
-        new sqlite3.Database(
+        var db = new sqlite3.Database(
             internals.options.connection,
-            sqlite3.OPEN_READWRITE,
-            function (err) {
-                cb(err, this);
-            }
+            sqlite3.OPEN_READWRITE
         );
+
+        db.once('error', function (err) {
+            cb(err, null);
+        });
+        db.once('open', function () {
+            cb(null, this);
+        });
     }
 };
 
@@ -42,12 +47,15 @@ exports.register.attributes = {
 
 
 exports.execute = function execute (actionsCb, cb) {
+
     internals.connect(function (err, db) {
+
         if (err) {
             return cb(err, null);
         }
         else {
             return actionsCb(db, function (err, result) {
+
                 db.close();
                 if (err) {
                     return cb(err, null);
@@ -57,17 +65,20 @@ exports.execute = function execute (actionsCb, cb) {
                 }
             });
         }
-    })
+    });
 };
 
 
 exports.executeQuery = function executeQuery (query, cb) {
+
     internals.connect(function (err, db) {
+
         if (err) {
             return cb(err, null);
         }
         else {
             return db.all(query, function (err, rows) {
+
                 db.close();
                 if (err) {
                     return cb(err, null);
@@ -77,17 +88,20 @@ exports.executeQuery = function executeQuery (query, cb) {
                 }
             });
         }
-    })
+    });
 };
 
 
 exports.executeQueryWithParams = function executeQuery (query, params, cb) {
+
     internals.connect(function (err, db) {
+
         if (err) {
             return cb(err, null);
         }
         else {
             return db.all(query, params, function (err, rows) {
+
                 db.close();
                 if (err) {
                     return cb(err, null);
@@ -97,5 +111,5 @@ exports.executeQueryWithParams = function executeQuery (query, params, cb) {
                 }
             });
         }
-    })
+    });
 };

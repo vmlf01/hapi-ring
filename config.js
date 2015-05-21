@@ -1,5 +1,5 @@
 var Confidence = require('confidence');
-
+var Path = require('path');
 
 var criteria = {
     env: process.env.NODE_ENV
@@ -21,7 +21,7 @@ var config = {
             verbose: true
         },
         $default: {
-            connection: __dirname + '/db/PortalConteudos.sqlite',
+            connection: Path.join(__dirname, 'db/PortalConteudos.sqlite'),
             verbose: false
         }
     }
